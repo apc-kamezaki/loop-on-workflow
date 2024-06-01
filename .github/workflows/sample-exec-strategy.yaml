@@ -1,0 +1,41 @@
+name: simple-exec-strategy
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    name: setup matrx
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.create-matrix.outputs.files }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: create matrix
+        id: create-matrix
+        run: |
+          echo "files=$(ls commands | jq -R . | jq -s -c .)" >> $GITHUB_OUTPUT
+
+  job:
+    name: setup target modules
+    runs-on: ubuntu-latest
+    needs: [ setup ]
+    strategy:
+      max-parallel: 3      
+      matrix:
+        file: ${{fromJson(needs.setup.outputs.files)}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: execute
+        continue-on-error: true
+        run: |
+          sh commands/${{ matrix.file }}
+
+  postExecute:
+    name: finalize
+    runs-on: ubuntu-latest
+    needs: [ job ]
+    steps:
+      - name: finalize
+        run: |
+          echo "All commands executed"
+  
