@@ -1,0 +1,19 @@
+name: simple-exec-loop-continue
+on:
+  workflow_dispatch:
+
+jobs:
+  job:
+    name: setup target modules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: loop
+        continue-on-error: true
+        run: |
+          for file in `ls commands`; do
+            sh "commands/${file}"
+          done
+      - name: finalize
+        run: |
+          echo "All commands executed"
