@@ -1,0 +1,17 @@
+name: simple-exec-shell
+on:
+  workflow_dispatch:
+
+jobs:
+  job:
+    name: setup target modules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: loop
+        run: |
+          sh loop.sh
+      - name: finalize
+        run: |
+          echo "All commands executed"
+  
